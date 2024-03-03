@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajout d'une nouvelle source{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    </div>
+
+    <script>
+        let sourceTypeInput = document.querySelector('#source_type');
+        let parametersInput = document.querySelector('#source_parameters');
+        let fileInput = document.querySelector('#source_attachement');
+
+        fileInput.parentNode.style.display = "none";
+        fileInput.setAttribute("disabled", "disabled");
+
+        sourceTypeInput.addEventListener('change', event => {
+            switch(event.target.value) {
+                case 'file':
+                    parametersInput.parentNode.style.display = "none";
+                    fileInput.parentNode.style.display = "block";
+                    parametersInput.setAttribute("disabled", "disabled");
+                    fileInput.removeAttribute("disabled");
+                    break;
+
+                default:
+                    fileInput.parentNode.style.display = "none";
+                    parametersInput.parentNode.style.display = "block";
+                    parametersInput.removeAttribute("disabled");
+                    fileInput.setAttribute("disabled", "disabled");
+            }
+        })
+    </script>
+
+{% endblock %}

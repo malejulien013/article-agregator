@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des articles{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <h1>Liste des articles</h1>
+        <div>
+            <form action="#">
+                <div class="d-flex flex-row justify-content-end align-items-end w-100">
+                    <div class="m-1">
+                        <label for="filterType"class="form-label">Filtrer par :</label>
+                        <select type="text" id="filterType" name="filterType" class="form-select">
+                            <option value="name">Titre</option>
+                            <option value="author">Auteur</option>
+                            <option value="publicationDate">Date de publication</option>
+                            <option value="source">Source</option>
+                        </select>
+                    </div>
+                    <div class="m-1">
+                        <label for="filterValue" class="form-label">Valeur</label>
+                        <input type="text" id="filterValue" name="filterValue" placeholder="Recherche..." class="form-control">
+                    </div>
+                    <div class="m-1">
+                        <input type="submit" value="Filtrer" class="btn btn-primary">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div>
+            {% if articles|length > 0 %}
+                <ul class="list-group">
+                    {% for article in articles %}
+                        <li class="list-group-item m-1">
+                            <p>Titre : {{ article.name }}</p>
+                            <p>Contenu : {{ article.content }}</p>
+                            <p>Auteur : {{ article.author }}</p>
+                            <p>Date de publication : {{ article.publicationDate|date("d/m/Y", "Europe/Paris") }}</p>
+                            <p>Source : {{ article.source.name }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <span>Aucun article à afficher</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        let articles = [];
+
+        {% if articles|length > 0 %}
+            {% for article in articles %}
+                articles.push({
+                    name: '{{ article.name }}',
+                    content: '{{ article.content | raw }}',
+                    author: '{{ article.author }}',
+                    publicationDate: '{{ article.publicationDate|date("d/m/Y", "Europe/Paris") }}',
+                    source: '{{ article.source.name }}'
+                });
+            {% endfor %}
+        {% endif %}
+
+        let form = document.querySelector('form');
+        let filterType = document.querySelector('#filterType');
+        let filterValue = document.querySelector('#filterValue');
+
+        form.addEventListener('submit', () => {
+
+        })
+    </script>
+{% endblock %}

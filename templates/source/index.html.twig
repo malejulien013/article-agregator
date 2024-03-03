@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des sources{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <h1>Liste des sources</h1>
+    <div>
+        <ul class="list-group">
+            {% if sources|length > 0 %}
+                {% for source in sources %}
+                    <li class="list-group-item m-1">
+                        <p>Nom : {{ source.name }}</p>
+                        <p>Type : {{ source.type.value}}</p>
+                        <p>Paramètres : {{ source.parameters}}</p>
+                    </li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+
+    <a href="{{ path('app_source_add') }}">Créer une nouvelle source</a>
+</div>
+{% endblock %}
