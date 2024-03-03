@@ -7,30 +7,28 @@
     <div class="container">
         <h1>Liste des articles</h1>
         <div>
-            <form action="#">
-                <div class="d-flex flex-row justify-content-end align-items-end w-100">
-                    <div class="m-1">
-                        <label for="filterType"class="form-label">Filtrer par :</label>
-                        <select type="text" id="filterType" name="filterType" class="form-select">
-                            <option value="name">Titre</option>
-                            <option value="author">Auteur</option>
-                            <option value="publicationDate">Date de publication</option>
-                            <option value="source">Source</option>
-                        </select>
-                    </div>
-                    <div class="m-1">
-                        <label for="filterValue" class="form-label">Valeur</label>
-                        <input type="text" id="filterValue" name="filterValue" placeholder="Recherche..." class="form-control">
-                    </div>
-                    <div class="m-1">
-                        <input type="submit" value="Filtrer" class="btn btn-primary">
-                    </div>
+            <div class="d-flex flex-row justify-content-end align-items-end w-100">
+                <div class="m-1">
+                    <label for="filterType"class="form-label">Filtrer par :</label>
+                    <select type="text" id="filterType" name="filterType" class="form-select">
+                        <option value="name">Titre</option>
+                        <option value="author">Auteur</option>
+                        <option value="publicationDate">Date de publication</option>
+                        <option value="source">Source</option>
+                    </select>
                 </div>
-            </form>
+                <div class="m-1">
+                    <label for="filterValue" class="form-label">Valeur</label>
+                    <input type="text" id="filterValue" name="filterValue" placeholder="Recherche..." class="form-control">
+                </div>
+                <div class="m-1">
+                    <input type="button" id="submitFilter" name="submitFilter" value="Filtrer" class="btn btn-primary">
+                </div>
+            </div>
         </div>
         <div>
             {% if articles|length > 0 %}
-                <ul class="list-group">
+                <ul id="list-articles" class="list-group">
                     {% for article in articles %}
                         <li class="list-group-item m-1">
                             <p>Titre : {{ article.name }}</p>
@@ -48,26 +46,64 @@
     </div>
 
     <script>
-        let articles = [];
+        document.addEventListener("DOMContentLoaded", () => {
+            let articles = [];
 
-        {% if articles|length > 0 %}
-            {% for article in articles %}
-                articles.push({
-                    name: '{{ article.name }}',
-                    content: '{{ article.content | raw }}',
-                    author: '{{ article.author }}',
-                    publicationDate: '{{ article.publicationDate|date("d/m/Y", "Europe/Paris") }}',
-                    source: '{{ article.source.name }}'
+            {% if articles|length > 0 %}
+                {% for article in articles %}
+                    articles.push({
+                        name: '{{ article.name }}',
+                        content: '{{ article.content }}',
+                        author: '{{ article.author }}',
+                        pubDate: '{{ article.publicationDate|date("d/m/Y", "Europe/Paris") }}',
+                        source: '{{ article.source.name }}'
+                    });
+                {% endfor %}
+            {% endif %}
+
+            const articlesList = document.querySelector('#list-articles');
+            const filterTypeElement = document.querySelector('#filterType');
+            const filterValueElement = document.querySelector('#filterValue');
+            const submitFilterElement = document.querySelector('#submitFilter');
+
+            submitFilterElement.addEventListener('click', () => {
+                let filteredArticles = [];
+                const currentFilterType = filterTypeElement.value;
+                const currentFilterValue = filterValueElement.value;
+
+                filteredArticles = articles.filter(article => {
+                    return article[currentFilterType].includes(currentFilterValue);
                 });
-            {% endfor %}
-        {% endif %}
 
-        let form = document.querySelector('form');
-        let filterType = document.querySelector('#filterType');
-        let filterValue = document.querySelector('#filterValue');
+                renderList(filteredArticles);
+            });
 
-        form.addEventListener('submit', () => {
+            const renderList = filteredArticles => {
+                while(articlesList.hasChildNodes()) {
+                    articlesList.removeChild(articlesList.firstChild);
+                }
 
-        })
+                filteredArticles.map(article => {
+                    let newListItem = document.createElement("li");
+                    newListItem.classList = "list-group-item m-1";
+                    let nameItem = document.createElement("p");
+                    nameItem.innerHTML = article.name;
+                    let contentItem = document.createElement("p");
+                    contentItem.innerHTML = article.content;
+                    let authorItem = document.createElement("p");
+                    authorItem.innerHTML = article.author;
+                    let pubDateItem = document.createElement("p");
+                    pubDateItem.innerHTML = article.pubDate;
+                    let sourceItem = document.createElement("p");
+                    sourceItem.innerHTML = article.source;
+                    newListItem.appendChild(nameItem);
+                    newListItem.appendChild(contentItem);
+                    newListItem.appendChild(authorItem);
+                    newListItem.appendChild(pubDateItem);
+                    newListItem.appendChild(sourceItem);
+                    return articlesList.appendChild(newListItem);
+                });
+            };
+        });
     </script>
 {% endblock %}
